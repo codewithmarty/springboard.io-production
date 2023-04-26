@@ -115,16 +115,12 @@ def signup(request):
 
 @csrf_exempt
 def login_user(request):
-    print(request.POST)
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password1')
         user = authenticate(request, username=username, password=password)
-        print(user)
         token = account_activation_token.make_token(user)
-        token_in_db = Token.objects.get(user=user)
-        token_in_db.key = token
-        token_in_db.save()
+        Token.objects.create(user=user, key=token)
         login(request, user)
         user = delete_user_keys(model_to_dict(user))
         return JsonResponse({'token': token, 'user': user}, safe=False)
