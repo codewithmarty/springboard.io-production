@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
-from .models import Job, Token
+from .models import Job, Token, JobApplication
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from .jobs import jobs
@@ -84,6 +84,21 @@ def show(request, job_id):
     return JsonResponse({'data': job_dict}, safe=False)
 
 @csrf_exempt
+def create_job(request, user_id):
+    print(request.POST)
+    job = Job.objects.create(
+        title=request.POST['title'],
+        company=request.POST['company'],
+        location=request.POST['location'],
+        description=request.POST['description'],
+        requirements=request.POST['requirements'],
+        salary=request.POST['salary'],
+        recruiter_id=user_id
+    )
+    job_dict = get_job_dict(job)
+    return JsonResponse({'data': job_dict}, safe=False)
+
+@csrf_exempt
 def create(request):
     for job in jobs:
         Job.objects.create(
@@ -137,3 +152,13 @@ def get_user_from_token(request):
     user = delete_user_keys(model_to_dict(user))
     return JsonResponse({'data': user}, safe=False)
 
+@csrf_exempt
+def apply_to_job(request, user_id, job_id):
+    job_application = JobApplication.objects.create(
+        user_id = user_id,
+        job_id = job_id,
+        portfolio_link = request.POST['portfolio_link'],
+        github_link = request.POST['github_link'],
+        deployed_link = request.POST['deployed_link']
+    )
+    return JsonResponse({ 'data': model_to_dict(job_application) })
