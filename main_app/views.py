@@ -78,6 +78,17 @@ def index(request):
     jobs_list = create_jobs_list(jobs)
     return JsonResponse({'data': jobs_list}, safe=False)
 
+def get_my_created_jobs(request, user_id):
+    jobs = Job.objects.filter(recruiter_id=user_id)
+    jobs_list = create_jobs_list(jobs)
+    return JsonResponse({'data': jobs_list}, safe=False)
+
+def get_my_applied_jobs(request, user_id):
+    job_applications = JobApplication.objects.filter(user_id=user_id).select_related('job')
+    jobs = [job_application.job for job_application in job_applications]
+    jobs_list = create_jobs_list(jobs)
+    return JsonResponse({'data': jobs_list}, safe=False)
+
 def show(request, job_id):
     job = Job.objects.get(id=job_id)
     job_dict = get_job_dict(job)
@@ -97,6 +108,12 @@ def create_job(request, user_id):
     )
     job_dict = get_job_dict(job)
     return JsonResponse({'data': job_dict}, safe=False)
+
+def delete_job(request, user_id, job_id):
+    job = Job.objects.get(id=job_id)
+    if job.recruiter_id == user_id:
+        Job.objects.filter(id=job_id).delete()
+    return JsonResponse({'response': 200}, safe=False)
 
 @csrf_exempt
 def create(request):
