@@ -162,3 +162,7 @@ def apply_to_job(request, user_id, job_id):
         deployed_link = request.POST['deployed_link']
     )
     return JsonResponse({ 'data': model_to_dict(job_application) })
+
+def get_application(request, user_id, job_id):
+    job_application = JobApplication.objects.get(user_id=user_id, job_id=job_id)
+    return JsonResponse({ 'data': model_to_dict(job_application) })

@@ -5,6 +5,7 @@ urlpatterns = [
     path('', index, name="job_index"),
     path('create/', create, name="jobs_create"),
     path('<int:user_id>/create_job/', create_job, name="create_job"),
+    path('<int:user_id>/get_applications/<int:job_id>/', get_application, name="get_application"),
     path('<int:user_id>/apply/<int:job_id>/', apply_to_job, name="apply_to_job"),
     path('<int:job_id>/', show, name="job_details"),
     path('accounts/signup/', signup, name='signup'),
