@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -165,9 +166,12 @@ def logout(request, user_id):
 def get_user_from_token(request):
     token = request.GET.get('token')
     token_obj = Token.objects.get(key=token)
-    user = token_obj.user
-    user = delete_user_keys(model_to_dict(user))
-    return JsonResponse({'data': user}, safe=False)
+    if token_obj:       
+        user = token_obj.user
+        user = delete_user_keys(model_to_dict(user))
+        return JsonResponse({'data': user}, safe=False)
+    else:
+        return JsonResponse({'status': 'no user'})
 
 @csrf_exempt
 def apply_to_job(request, user_id, job_id):
