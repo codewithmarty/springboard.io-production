@@ -102,7 +102,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:4200',
-    'https://springboardio.up.railway.app/'
 ]
 
 LANGUAGE_CODE = 'en-us'
