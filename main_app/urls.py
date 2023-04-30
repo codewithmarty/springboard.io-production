@@ -7,6 +7,7 @@ urlpatterns = [
     path('<int:user_id>/my_applied_jobs/', get_my_applied_jobs),
     path('create/', create),
     path('<int:user_id>/create_job/', create_job),
+    path('get_applications/<int:job_id>/', get_all_applications),
     path('<int:user_id>/get_applications/<int:job_id>/', get_application),
     path('<int:user_id>/apply/<int:job_id>/', apply_to_job),
     path('<int:job_id>/', show),

@@ -97,7 +97,6 @@ def show(request, job_id):
 
 @csrf_exempt
 def create_job(request, user_id):
-    print(request.POST)
     job = Job.objects.create(
         title=request.POST['title'],
         company=request.POST['company'],
@@ -187,3 +186,21 @@ def apply_to_job(request, user_id, job_id):
 def get_application(request, user_id, job_id):
     job_application = JobApplication.objects.get(user_id=user_id, job_id=job_id)
     return JsonResponse({ 'data': model_to_dict(job_application) })
+
+def create_job_applicant_data(user, application):
+    dict = {
+        'name': f"{user['first_name']} {user['last_name']}",
+        'email': user['email'],
+        'portfolio_link': application['portfolio_link'],
+        'github_link': application['portfolio_link'],
+        'deployed_link': application['deployed_link']
+    }
+    return dict
+
+def get_all_applications(request, job_id):
+    job_applications = JobApplication.objects.filter(job_id=job_id)
+    applicants = [job_application.user for job_application in job_applications]
+    job_applications = [model_to_dict(job_application) for job_application in job_applications]
+    applicants_base_data = [delete_user_keys(model_to_dict(user)) for user in applicants]
+    applicants_data = [create_job_applicant_data(applicants_base_data[i], job_applications[i]) for i in range(len(applicants))]
+    return JsonResponse({ 'data': applicants_data })
